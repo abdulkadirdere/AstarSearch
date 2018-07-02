@@ -1,5 +1,7 @@
 package astarsearch;
 
+import java.lang.reflect.Array;
+
 /**
  *
  * @author Kadir
@@ -20,5 +22,9 @@ public class Node {
 
     public int getY() {
         return y;
+    }
+    
+    public int g(){
+        return 1;
     }
 }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 import astarsearch.Node;
+import static java.lang.Integer.MAX_VALUE;
 
 /**
  *
@@ -25,7 +26,7 @@ public class AstarSearch {
         String[][] myArray = new String[rows][columns];
         while (sc.hasNextLine()) {
             for (int i = 0; i < myArray.length; i++) {
-                String[] line = sc.nextLine().trim().split(" ");
+                String[] line = sc.nextLine().toUpperCase().trim().split(" ");
                 for (int j = 0; j < line.length; j++) {
                     myArray[i][j] = (line[j]);
                 }
@@ -37,8 +38,6 @@ public class AstarSearch {
                 if ((myArray[k][l]).equals(".")) {
                     myTemp[k][l] = 0;
                 } else if ((myArray[k][l]).equals("W")) {
-                    myTemp[k][l] = 2;
-                } else if ((myArray[k][l]).equals("w")) {
                     myTemp[k][l] = 2;
                 } else if ((myArray[k][l]).equals("S")) {
                     myTemp[k][l] = 1;
@@ -59,7 +58,7 @@ public class AstarSearch {
 
         astar(startX, startY, endX, endY, myArray);
 
-        //System.out.println("final map:");
+        System.out.println("final map:");
         printMap(myArray);
     }
 
@@ -76,48 +75,97 @@ public class AstarSearch {
         ArrayList<Node> closedList = new ArrayList<>();
 
         openList.add(start);
+        Node current = start;
+
+        int x = current.x;
+        int y = current.y;
+        int up = current.y + 1;
+        int down = current.y - 1;
+        int right = current.x + 1;
+        int left = current.x - 1;
 
         while (!openList.isEmpty()) {
-            Node current = start;
-            
-            openList.remove(start);
+
+            openList.remove(openList.get(0));
+            System.out.println("open empty? "+openList.isEmpty());
             closedList.add(current);
             
-            int x = current.x;
-            int y = current.y;
-            int up = current.y + 1;
-            int down = current.y - 1;
-            int right = current.x + 1;
-            int left = current.x - 1;
-
-
             if (current.equals(end)) {
                 return;
             }
-            
+
             //up
-            if ((myArray[up][x]).equals(".")) {
-                f_cost = g_cost + heuristic(x,up,endX,endY);
-                myArray[up][x] = "X";
-                System.out.println("up "+f_cost);
+            try {
+                System.out.println("1 "+((myArray[up][x]).equals(".") && !closedList.contains(myArray[up][x])));
+                if ((myArray[up][x]).equals(".") && !closedList.contains(myArray[up][x])) {
+                    int f_costUp = g_cost + heuristic(x, up, endX, endY);
+                    if (f_costUp <= f_cost) {
+                        current = new Node(x, up);
+                        f_cost = f_costUp;
+                    }
+                    //myArray[up][x] = "X";
+                    System.out.println("up " + f_cost);
+                    if (!openList.contains(myArray[up][x])) {
+                        openList.add(new Node(x, up));
+                    }
+                }
+            } catch (Exception e) {
+
             }
             //down
-            if ((myArray[down][x]).equals(".")) {
-                f_cost = g_cost + heuristic(x,down,endX,endY);
-                myArray[down][x] = "X";
-                System.out.println("down "+f_cost);
+            try {
+                System.out.println("2 "+((myArray[down][x]).equals(".") && !closedList.contains(myArray[down][x])));    
+                if ((myArray[down][x]).equals(".") && !closedList.contains(myArray[down][x])) {
+                    int f_costDown = current.g() + heuristic(x, down, endX, endY);
+                    if (f_costDown <= f_cost) {
+                        current = new Node(x, down);
+                        f_cost = f_costDown;
+                    }
+                    //myArray[down][x] = "X";
+                    System.out.println("down " + f_cost);
+                    if (!openList.contains(myArray[down][x])) {
+                        openList.add(new Node(x, down));
+                    }
+                }
+            } catch (Exception e) {
+
             }
             //right
-            if ((myArray[y][right]).equals(".")) {
-                 f_cost = g_cost + heuristic(right,y,endX,endY);
-                myArray[y][right] = "X";
-                System.out.println("right "+f_cost);
+            try {
+                System.out.println("3 "+((myArray[y][right]).equals(".") && !closedList.contains(myArray[y][right])));
+                if ((myArray[y][right]).equals(".") && !closedList.contains(myArray[y][right])) {
+                    int f_costRight = g_cost + heuristic(right, y, endX, endY);
+                    if (f_costRight <= f_cost) {
+                        current = new Node(right, y);
+                        f_cost = f_costRight;
+                    }
+                    //myArray[y][right] = "X";
+                    System.out.println("right " + f_cost);
+                    if (!openList.contains(myArray[y][right])) {
+                        openList.add(new Node(right, y));
+                    }
+                }
+            } catch (Exception e) {
+
             }
             //left
-            if ((myArray[y][left]).equals(".")) {
-                 f_cost = g_cost + heuristic(left,y,endX,endY);
-                myArray[y][left] = "X";
-                System.out.println("left "+f_cost);
+            try {
+                System.out.println("4 "+((myArray[y][left]).equals(".") && !closedList.contains(myArray[y][left])));
+                if ((myArray[y][left]).equals(".") && !closedList.contains(myArray[y][left])) {
+                    int f_costLeft = g_cost + heuristic(left, y, endX, endY);
+                    if (f_costLeft <= f_cost) {
+                        current = new Node(y, left);
+                        f_cost = f_costLeft;
+                    }
+
+                    //myArray[y][left] = "X";
+                    System.out.println("left " + f_cost);
+                    if (!openList.contains(myArray[y][left])) {
+                        openList.add(new Node(y, left));
+                    }
+                }
+            } catch (Exception e) {
+
             }
 
         }
@@ -146,10 +194,7 @@ public class AstarSearch {
     public static int countColumn() throws FileNotFoundException, IOException {
         BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Kadir\\Desktop\\map.txt"));
         String thisLine = br.readLine();
-        int count = 0;
-        for (int i = 0; i < thisLine.length(); i++) {
-            count++;
-        }
+        int count = thisLine.length();
         count = count / 2;
         System.out.println("Column: " + count);
         return count;
