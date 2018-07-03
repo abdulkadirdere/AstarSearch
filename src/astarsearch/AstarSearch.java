@@ -18,28 +18,34 @@ public class AstarSearch {
 
     public static void main(String[] args) throws IOException {
         //input map file
-        //File file = new File("C:\\Users\\A232838\\Desktop\\map.txt");
 
         Scanner sc = new Scanner(new BufferedReader(new FileReader("C:\\Users\\Kadir\\Desktop\\map.txt")));
         int rows = countRows();
         int columns = countColumn();
+        int startX = 0,startY = 0,endX = 0,endY = 0;
+        
         String[][] myArray = new String[rows][columns];
         while (sc.hasNextLine()) {
             for (int i = 0; i < myArray.length; i++) {
                 String[] line = sc.nextLine().toUpperCase().trim().split(" ");
                 for (int j = 0; j < line.length; j++) {
                     myArray[i][j] = (line[j]);
+                    if (myArray[i][j].equals("S")) {
+                        startX = j;
+                        startY = i;
+                        System.out.println("start x: " + startX + " y: " + startY);
+                    }
+                    if (myArray[i][j].equals("E")) {
+                        endX = j;
+                        endY = i;
+                        System.out.println("end x: " + endX + " y: " + endY);
+                    }
                 }
             }
         }
 
         //print map
         //printMap(myArray);
-        //System.out.println("start: "+myArray[4][0]);
-        int startX = 0;
-        int startY = 4;
-        int endX = 19;
-        int endY = 4;
 
         astar(startX, startY, endX, endY, myArray);
 
@@ -63,7 +69,7 @@ public class AstarSearch {
         Node current = start;
 
         while (!openList.isEmpty()) {
-            
+
             int x = current.getX();
             int y = current.getY();
             int up = current.getY() + 1;
@@ -75,78 +81,94 @@ public class AstarSearch {
             int f_costRight = MAX_VALUE;
             int f_costLeft = MAX_VALUE;
 
+            printNode(openList);
             openList.remove(openList.get(0));
             //System.out.println("open empty? " + openList.isEmpty());
-            closedList.add(current);
-            //printNode(closedList);
+            if (!closedList.contains(current)) {
+                closedList.add(current);
+            }
+
+            System.out.println("----------------------------");
             if (current.equals(end)) {
                 return;
             }
-
+            //System.out.println("x " + current.getX() + " y " + current.getY());
             //up
             try {
                 if ((myArray[up][x]).equals(".") && !closedList.contains(myArray[up][x])) {
                     f_costUp = g_cost + heuristic(x, up, endX, endY);
+                    //System.out.println("up "+f_costUp);
+                    if (!openList.contains(myArray[up][x])) {
+                        openList.add(current);
+                    }
                 }
             } catch (Exception e) {
 
             }
-            
+
             //down
             try {
                 if ((myArray[down][x]).equals(".") && !closedList.contains(myArray[down][x])) {
                     f_costDown = current.g() + heuristic(x, down, endX, endY);
+                    //System.out.println("down "+f_costDown);
+                    if (!openList.contains(myArray[down][x])) {
+                        openList.add(current);
+                    }
                 }
             } catch (Exception e) {
 
             }
-            
+
             //right
             try {
                 if ((myArray[y][right]).equals(".") && !closedList.contains(myArray[y][right])) {
                     f_costRight = g_cost + heuristic(right, y, endX, endY);
+                    //System.out.println("right "+f_costRight);
+                    if (!openList.contains(myArray[y][right])) {
+                        openList.add(current);
+                    }
                 }
             } catch (Exception e) {
 
             }
-            
+
             //left
             try {
                 if ((myArray[y][left]).equals(".") && !closedList.contains(myArray[y][left])) {
                     f_costLeft = g_cost + heuristic(left, y, endX, endY);
+                    //System.out.println("left "+f_costLeft);
+                    if (!openList.contains(myArray[y][left])) {
+                        openList.add(current);
+                    }
                 }
             } catch (Exception e) {
 
             }
 
+            //deciding which f_cost is the lowest to select the current node
             if (f_costUp <= f_cost) {
                 current = new Node(x, up);
                 f_cost = f_costUp;
-                if (!openList.contains(myArray[up][x])) {
-                    openList.add(current);
-                }
+
             }
             if (f_costDown <= f_cost) {
                 current = new Node(x, down);
                 f_cost = f_costDown;
-                if (!openList.contains(myArray[down][x])) {
-                    openList.add(current);
-                }
+
             }
             if (f_costRight <= f_cost) {
                 current = new Node(right, y);
                 f_cost = f_costRight;
-                if (!openList.contains(myArray[y][right])) {
-                    openList.add(current);
-                }
+
             }
             if (f_costLeft <= f_cost) {
                 current = new Node(left, y);
                 f_cost = f_costLeft;
-                if (!openList.contains(myArray[y][left])) {
                     openList.add(current);
                 }
+
             }
+
             //astar(current.getX(), current.getY(), endX, endY, myArray);
             myArray[current.getY()][current.getX()] = "X";
         }
@@ -180,10 +202,10 @@ public class AstarSearch {
         System.out.println("Column: " + count);
         return count;
     }
-    
-    public static void printNode(ArrayList<Node> list){
+
+    public static void printNode(ArrayList<Node> list) {
         for (Node node : list) {
-                System.out.println("x: "+node.getX()+" y: "+node.getY());
-            }
+            System.out.println("x: " + node.getX() + " y: " + node.getY());
+        }
     }
 }
