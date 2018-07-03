@@ -8,8 +8,8 @@ import java.lang.reflect.Array;
  */
 public class Node {
 
-    int x;
-    int y;
+    private int x;
+    private int y;
 
     public Node(int x, int y) {
         this.x = x;
